@@ -94,14 +94,46 @@ function handleFloatingCodeColumn() {
     }
 }
 
+/* Detect if the user has scrolled into a new section and apply intertia resistence. */
+function checkForIntertiaScrolling(event) {
+    var origEvent = event.originalEvent;
+    var target = origEvent.target;
+    var dir = (origEvent.deltaY) < 0 ? 'up' : 'down';
+    var delta = origEvent.wheelDelta / 4 || -origEvent.detail || -origEvent.deltaY;
+
+    // If scrolling down, check if the section header is coming into view
+    if(dir == 'down'){
+        var section_headers = $('.sect1:not(#guide_meta) h2');
+        section_headers.each(function(index) {
+            var elem = $(section_headers.get(index));
+            var windowHeight   = $(window).height();
+            var rect = elem[0].getBoundingClientRect();
+            var top = rect.top;
+            var bottom = rect.bottom;
+
+            if(top > 0 && top < windowHeight && bottom > windowHeight){
+                // New section is coming into view. Start slowing down scrolling.
+                event.preventDefault();
+                event.stopPropagation();
+
+                var scrollTop = $(window).scrollTop();
+                $('html, body').stop().animate({
+                   scrollTop: scrollTop - delta
+                }, 500);
+            }
+            
+        });
+    }
+}
+
 /* Find the section that is most visible in the viewport and return the id */
-function getScrolledVisibleSectionID(event) {
+function getScrolledVisibleSectionID() {
     var id = null;
     var maxVisibleSectionHeight = 0;
 
     // Multipane view
     if ($(window).width() > twoColumnBreakpoint) {
-        var sections = $('.sect1:not(#guide_meta):not(#related-guides)');
+        var sections = $('.sect1:not(#guide_meta)');
         sections.each(function(index) {
             var elem = $(sections.get(index));
             var windowHeight   = $(window).height();

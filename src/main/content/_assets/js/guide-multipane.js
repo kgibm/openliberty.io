@@ -255,10 +255,10 @@ $(document).ready(function() {
     }
 
     // Slow the scrolling over section headers in the guide
-    function handleSectionSnapping(event){
+    function handleSectionChanging(event){
         // Multipane view
         if($(window).width() > twoColumnBreakpoint) {
-            var id = getScrolledVisibleSectionID(event);
+            var id = getScrolledVisibleSectionID();
             if (id) {
                 // Remove previous TOC section highlighted and highlight correct step
                 updateTOCHighlighting(id);                      
@@ -290,9 +290,12 @@ $(document).ready(function() {
             }   
         }            
     }
+    $(window).on('mousewheel', function(event){
+        checkForIntertiaScrolling(event);
+    });
     $(window).on('scroll', function(event) {
         handleGithubPopup(false);
-        handleSectionSnapping(event);
+        handleSectionChanging(event);
     });
 
     $(window).on('load', function(){
