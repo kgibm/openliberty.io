@@ -99,14 +99,16 @@ function checkForIntertiaScrolling(event) {
     var origEvent = event.originalEvent;
     var target = origEvent.target;
     var dir = (origEvent.deltaY) < 0 ? 'up' : 'down';
-    var delta = origEvent.wheelDelta / 4 || -origEvent.detail || -origEvent.deltaY;
+    var delta = origEvent.wheelDelta / 4 || -origEvent.detail || -origEvent.deltaY;    
 
     // If scrolling down, check if the section header is coming into view
     if(dir == 'down'){
         var section_headers = $('.sect1:not(#guide_meta) h2');
         section_headers.each(function(index) {
             var elem = $(section_headers.get(index));
+            var scrollTop = $(window).scrollTop();
             var windowHeight   = $(window).height();
+            var navbarHeight = $("nav").height();
             var rect = elem[0].getBoundingClientRect();
             var top = rect.top;
             var bottom = rect.bottom;
@@ -115,13 +117,25 @@ function checkForIntertiaScrolling(event) {
                 // New section is coming into view. Start slowing down scrolling.
                 event.preventDefault();
                 event.stopPropagation();
-
-                var scrollTop = $(window).scrollTop();
+                
+                // Firefox's event doesn't have wheelData or detail so we must simulate the scroll
+                if(delta === -1){
+                    delta = -50;
+                }
                 $('html, body').stop().animate({
                    scrollTop: scrollTop - delta
-                }, 500);
-            }
-            
+                });
+                return false;
+            }  else if(top > 0 && top < windowHeight && bottom < windowHeight && bottom > (windowHeight - 25)){
+                event.preventDefault();
+                event.stopPropagation();
+                // Section header is now scrolled into view
+                // Scroll to the top of the element
+                $('html, body').stop().animate({
+                    scrollTop: elem.offset().top - navbarHeight
+                 });
+                return false;
+            }      
         });
     }
 }
