@@ -290,7 +290,7 @@ $(document).ready(function() {
             }   
         }            
     }
-    $(window).on('wheel mousewheel DOMMouseScroll', function(event){
+    $(window).on('mousewheel DOMMouseScroll', function(event){
         checkForIntertiaScrolling(event);
     });
     $(window).on('scroll', function(event) {

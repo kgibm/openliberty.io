@@ -94,12 +94,13 @@ function handleFloatingCodeColumn() {
     }
 }
 
-/* Detect if the user has scrolled into a new section and apply intertia resistence. */
+/* Detect if the user has scrolled downwards into a new section and apply intertia resistence. */
 function checkForIntertiaScrolling(event) {
     var origEvent = event.originalEvent;
     var target = origEvent.target;
     var dir = (origEvent.deltaY) < 0 ? 'up' : 'down';
-    var delta = origEvent.wheelDelta / 4 || -origEvent.detail || -origEvent.deltaY;    
+    var originalDelta = origEvent.wheelDelta || -origEvent.detail || -origEvent.deltaY; 
+    var delta = origEvent.wheelDelta / 6 || -origEvent.detail || -origEvent.deltaY;    
 
     // If scrolling down, check if the section header is coming into view
     if(dir == 'down'){
@@ -113,20 +114,24 @@ function checkForIntertiaScrolling(event) {
             var top = rect.top;
             var bottom = rect.bottom;
 
-            if(top > 0 && top < windowHeight && bottom > windowHeight){
+            var sectionOutOfView = (top > windowHeight);
+            var sectionWillBeScrolledPast = ((top + originalDelta) > 0) && ((top + originalDelta) < windowHeight) && ((bottom + originalDelta) < windowHeight);
+
+            // Check if part of a new section is coming into view or if the original scroll event would have scrolled past a section start.
+            if((top > 0 && top < windowHeight && bottom > windowHeight) || (sectionOutOfView && sectionWillBeScrolledPast)){
                 // New section is coming into view. Start slowing down scrolling.
                 event.preventDefault();
                 event.stopPropagation();
                 
                 // Firefox's event doesn't have wheelData or detail so we must simulate the scroll
-                if(delta === -1){
-                    delta = -50;
+                if(Math.abs(delta) < 25){
+                    delta = -25;
                 }
                 $('html, body').stop().animate({
                    scrollTop: scrollTop - delta
                 });
                 return false;
-            }  else if(top > 0 && top < windowHeight && bottom < windowHeight && bottom > (windowHeight - 25)){
+            }  else if(top > 0 && top < windowHeight && bottom < windowHeight && bottom > (windowHeight - 200)){
                 event.preventDefault();
                 event.stopPropagation();
                 // Section header is now scrolled into view
