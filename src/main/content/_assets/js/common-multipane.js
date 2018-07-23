@@ -95,20 +95,26 @@ function handleFloatingCodeColumn() {
 }
 
 /* Detect if the user has scrolled downwards into a new section and apply intertia resistence. */
-function checkForIntertiaScrolling(event) {
+function checkForIntertiaScrolling(event){
     var origEvent = event.originalEvent;
     var target = origEvent.target;
-    var dir = (origEvent.deltaY) < 0 ? 'up' : 'down';
-    var originalDelta = origEvent.wheelDelta || -origEvent.detail || -origEvent.deltaY; 
+    var dir;
+    if(origEvent.deltaY){
+        dir = (origEvent.deltaY) > 0 ? 'down' : 'up';
+    } else if(origEvent.detail){
+        // Firefox
+        dir = (origEvent.detail) > 0 ? 'down' : 'up';
+    }
+    var originalDelta = origEvent.wheelDelta || -origEvent.detail || -origEvent.deltaY;
     var delta = origEvent.wheelDelta / 6 || -origEvent.detail || -origEvent.deltaY;    
 
     // If scrolling down, check if the section header is coming into view
-    if(dir == 'down'){
+    if(dir && dir == 'down'){
         var section_headers = $('.sect1:not(#guide_meta) h2');
         section_headers.each(function(index) {
             var elem = $(section_headers.get(index));
             var scrollTop = $(window).scrollTop();
-            var windowHeight   = $(window).height();
+            var windowHeight = $(window).height();
             var navbarHeight = $("nav").height();
             var rect = elem[0].getBoundingClientRect();
             var top = rect.top;
