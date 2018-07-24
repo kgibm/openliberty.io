@@ -290,6 +290,7 @@ $(document).ready(function() {
             }   
         }            
     }
+
     $(window).on('mousewheel DOMMouseScroll', function(event){
         checkForIntertiaScrolling(event);
     });

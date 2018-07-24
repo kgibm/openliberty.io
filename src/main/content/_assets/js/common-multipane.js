@@ -11,6 +11,7 @@
 // The background is shortened by 200px
 var backgroundSizeAdjustment = 200;
 var twoColumnBreakpoint = 1170;
+// var scrollLock = false;
 
 function inSingleColumnView(){
     return($(window).width() <= twoColumnBreakpoint);
@@ -95,7 +96,7 @@ function handleFloatingCodeColumn() {
 }
 
 /* Detect if the user has scrolled downwards into a new section and apply intertia resistence. */
-function checkForIntertiaScrolling(event){
+function checkForIntertiaScrolling (event){
     var origEvent = event.originalEvent;
     var target = origEvent.target;
     var dir;
@@ -106,7 +107,7 @@ function checkForIntertiaScrolling(event){
         dir = (origEvent.detail) > 0 ? 'down' : 'up';
     }
     var originalDelta = origEvent.wheelDelta || -origEvent.detail || -origEvent.deltaY;
-    var delta = origEvent.wheelDelta / 6 || -origEvent.detail || -origEvent.deltaY;    
+    var delta = origEvent.wheelDelta / 6 || -origEvent.detail / 3 || -origEvent.deltaY;
 
     // If scrolling down, check if the section header is coming into view
     if(dir && dir == 'down'){
@@ -126,25 +127,23 @@ function checkForIntertiaScrolling(event){
             // Check if part of a new section is coming into view or if the original scroll event would have scrolled past a section start.
             if((top > 0 && top < windowHeight && bottom > windowHeight) || (sectionOutOfView && sectionWillBeScrolledPast)){
                 // New section is coming into view. Start slowing down scrolling.
-                event.preventDefault();
-                event.stopPropagation();
-                
-                // Firefox's event doesn't have wheelData or detail so we must simulate the scroll
-                if(Math.abs(delta) < 25){
-                    delta = -25;
-                }
-                $('html, body').stop().animate({
-                   scrollTop: scrollTop - delta
-                });
-                return false;
+                // Check if scroll delta is at least a certain amount before stopping the default scroll, to allow for trackpad acceleration. If each scroll event.preventDefault() is called while scrolling on a trackpad, the delta is too small and the trackpad acceleration does not take place.
+                if(Math.abs(delta) >= 5){
+                    event.preventDefault();
+                    event.stopPropagation();  
+                    $('html, body').stop().animate({
+                        scrollTop: scrollTop - delta
+                    });                    
+                    return false;
+                }                          
             }  else if(top > 0 && top < windowHeight && bottom < windowHeight && bottom > (windowHeight - 200)){
                 event.preventDefault();
                 event.stopPropagation();
                 // Section header is now scrolled into view
-                // Scroll to the top of the element
+                // Snap to the top of the element
                 $('html, body').stop().animate({
                     scrollTop: elem.offset().top - navbarHeight
-                 });
+                 });                 
                 return false;
             }      
         });
