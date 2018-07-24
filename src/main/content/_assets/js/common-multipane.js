@@ -128,9 +128,9 @@ function checkForIntertiaScrolling (event){
             if((top > 0 && top < windowHeight && bottom > windowHeight) || (sectionOutOfView && sectionWillBeScrolledPast)){
                 // New section is coming into view. Start slowing down scrolling.
                 // Check if scroll delta is at least a certain amount before stopping the default scroll, to allow for trackpad acceleration. If each scroll event.preventDefault() is called while scrolling on a trackpad, the delta is too small and the trackpad acceleration does not take place.
-                if(Math.abs(delta) >= 5){
+                if(Math.abs(delta) >= 1){
                     event.preventDefault();
-                    event.stopPropagation();  
+                    event.stopPropagation();
                     $('html, body').stop().animate({
                         scrollTop: scrollTop - delta
                     });                    
