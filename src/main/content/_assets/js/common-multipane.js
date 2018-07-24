@@ -107,7 +107,7 @@ function checkForIntertiaScrolling (event){
         dir = (origEvent.detail) > 0 ? 'down' : 'up';
     }
     var originalDelta = origEvent.wheelDelta || -origEvent.detail || -origEvent.deltaY;
-    var delta = origEvent.wheelDelta / 6 || -origEvent.detail / 3 || -origEvent.deltaY;
+    var delta = origEvent.wheelDelta / 120 || -origEvent.detail / 3 || -origEvent.deltaY;
 
     // If scrolling down, check if the section header is coming into view
     if(dir && dir == 'down'){
@@ -128,7 +128,7 @@ function checkForIntertiaScrolling (event){
             if((top > 0 && top < windowHeight && bottom > windowHeight) || (sectionOutOfView && sectionWillBeScrolledPast)){
                 // New section is coming into view. Start slowing down scrolling.
                 // Check if scroll delta is at least a certain amount before stopping the default scroll, to allow for trackpad acceleration. If each scroll event.preventDefault() is called while scrolling on a trackpad, the delta is too small and the trackpad acceleration does not take place.
-                if(Math.abs(delta) >= 1){
+                if(Math.abs(delta) >= 0.25){
                     event.preventDefault();
                     event.stopPropagation();
                     $('html, body').stop().animate({
