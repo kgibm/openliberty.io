@@ -199,6 +199,12 @@ $(document).ready(function() {
         handleFloatingCodeColumn();
     });
 
+    window.addEventListener("hashchange", function(){
+        shiftWindow();
+        var id = location.hash.substring(1);
+        updateTOCHighlighting(id);
+    });
+
     $(window).on('load', function(){
         handleFloatingTableOfContent();
         addGuideRatingsListener();
