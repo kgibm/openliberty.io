@@ -203,6 +203,7 @@ $(document).ready(function() {
         shiftWindow();
         var id = location.hash.substring(1);
         updateTOCHighlighting(id);
+        handleFloatingTableOfContent();
     });
 
     $(window).on('load', function(){
