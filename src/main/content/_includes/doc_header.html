@@ -65,8 +65,6 @@
                             <span id="breadcrumb_line">|</span>
                             <li id="breadcrumb_version">VERSION:</li>
 
-
-
                             {% for javadoc in versions %}
                             <li class="javadoc_version">
                                 {% if page.version == javadoc.version %}
@@ -85,8 +83,12 @@
                         </li>
                         <li>
                             <a href="/docs/ref/config/">Config</a>
-                        </li>    
-                                       
+                        </li>
+
+                    <!-- Intro Docs page -->
+                    {% elsif page.type == 'intro' %}
+                        <li class="active">Intro</li>
+
                     <!-- All Guides page -->
                     {% elsif page.url == '/guides/' %}
                         <li class="active">Guides</li>
